@@ -110,8 +110,8 @@ namespace Harthoorn.MuseClient
 
         private static void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
-            var s = args.CharacteristicValue.AsString().Replace('\n', ' '); ;
-            Console.WriteLine(s);
+            Print.TelemetryModel(args.CharacteristicValue);
+            //Print.Raw(args.CharacteristicValue);
         }
     }
 }

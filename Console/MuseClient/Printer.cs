@@ -90,6 +90,41 @@ namespace Harthoorn.MuseClient
             return $"{hex} {parsed}";
         }
 
+      
+        public static void Raw(IBuffer buffer)
+        {
+            var s = buffer.AsString().Replace('\n', ' ');
+            Console.WriteLine(s);
+        }
+
+        public static string Read(this IBuffer buffer)
+        {
+
+            var dataReader = DataReader.FromBuffer(buffer);
+            var output = dataReader.ReadString(buffer.Length);
+            output = output.Replace('\n', '.');
+            return output;
+        }
+
+        public static void TelemetryModel(Telemetry t)
+        {
+            Console.WriteLine("Telemetry:");
+            Console.WriteLine($" - seq: {t.SequenceId}");
+            Console.WriteLine($" - Battery: {t.BatteryLevel}");
+            Console.WriteLine($" - Voltage: {t.Voltage}");
+            Console.WriteLine($" - Temp: {t.Temperature}");
+        }
+
+        public static void TelemetryModel(IBuffer buffer)
+        {
+            var t = Telemetry.ParseBuffer(buffer);
+            Print.TelemetryModel(t);
+        }
+
+    }
+
+    public static class Parser
+    {
         public static byte[] ReadBytes(this IBuffer buffer)
         {
             var dataLength = buffer.Length;
@@ -101,17 +136,7 @@ namespace Harthoorn.MuseClient
             return data;
         }
 
-
-        public static string Read(this IBuffer buffer)
-        {
-
-            var dataReader = DataReader.FromBuffer(buffer);
-            var output = dataReader.ReadString(buffer.Length);
-            output = output.Replace('\n', '.');
-            return output;
-        }
-
+        
     }
 
-    
 }

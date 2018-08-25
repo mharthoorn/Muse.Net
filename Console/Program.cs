@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Harthoorn.MuseClient;
+using System.Linq;
 
 namespace ConsoleApp
 {
@@ -9,11 +10,19 @@ namespace ConsoleApp
     class Program
     {
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Test().Wait();
+            await Test();
+            //TestTelemetry();
             Console.ReadKey();
 
+        }
+
+        public static void TestTelemetry()
+        {
+            var array = new byte[] { 1, 74, 181, 184, 7, 64, 15, 127, 0, 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            var t = Telemetry.ParseBuffer(array);
+            Print.TelemetryModel(t);
         }
 
         public static async Task Test()
@@ -23,16 +32,16 @@ namespace ConsoleApp
             Print.DeviceDetails(device);
             var service = device.GetGattService(MuseGuid.PRIMARY_SERVICE);
 
-            var ch = service.GetCharacteristic(MuseGuid.ACELEROMETER);
+            var channel = service.GetCharacteristic(MuseGuid.TELEMETRY);
             var control = service.GetCharacteristic(MuseGuid.CONTROL);
 
             Console.WriteLine("Connecting to Muse Headband...");
             
-            bool ok = await control.Start(ch);
+            bool ok = await control.Start(channel);
 
             if (ok)
             {
-                await Scanner.ScanData(control, ch);
+                await Scanner.ScanData(control, channel);
             }
             else
             {
