@@ -1,55 +1,43 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.System;
+using Windows.Devices.Bluetooth;
+using Harthoorn.MuseClient;
 
-using Windows.Devices.Bluetooth.Advertisement;
-
-namespace ConsoleApplication1
+namespace ConsoleApp
 {
+
     class Program
     {
+
         static void Main(string[] args)
         {
-            // Start the program
-            var program = new Program();
+            Test().Wait();
+            Console.ReadKey();
 
-            // Close on key press
-            Console.ReadLine();
         }
 
-        public Program()
+        public static async Task Test()
         {
-            // Create Bluetooth Listener
-            var watcher = new BluetoothLEAdvertisementWatcher();
+            var device = await BluetoothLEDevice.FromBluetoothAddressAsync(MyMuse.Address);
+            
+            Print.DeviceDetails(device);
+            var service = device.GetGattService(MuseGuid.PRIMARY_SERVICE);
 
-            watcher.ScanningMode = BluetoothLEScanningMode.Active;
+            var ch = service.GetCharacteristic(MuseGuid.ACELEROMETER);
+            var control = service.GetCharacteristic(MuseGuid.CONTROL);
 
-            // Only activate the watcher when we're recieving values >= -80
-            watcher.SignalStrengthFilter.InRangeThresholdInDBm = -80;
+            Console.WriteLine("Connecting to Muse Headband...");
+            
+            bool ok = await control.Start(ch);
 
-            // Stop watching if the value drops below -90 (user walked away)
-            watcher.SignalStrengthFilter.OutOfRangeThresholdInDBm = -90;
-
-            // Register callback for when we see an advertisements
-            watcher.Received += OnAdvertisementReceived;
-
-            // Wait 5 seconds to make sure the device is really out of range
-            watcher.SignalStrengthFilter.OutOfRangeTimeout = TimeSpan.FromMilliseconds(5000);
-            watcher.SignalStrengthFilter.SamplingInterval = TimeSpan.FromMilliseconds(2000);
-
-            // Starting watching for advertisements
-            watcher.Start();
-        }
-
-        private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
-        {
-            // Tell the user we see an advertisement and print some properties
-            Console.WriteLine(String.Format("Advertisement:"));
-            Console.WriteLine(String.Format("  BT_ADDR: {0}", eventArgs.BluetoothAddress));
-            Console.WriteLine(String.Format("  FR_NAME: {0}", eventArgs.Advertisement.LocalName));
+            if (ok)
+            {
+                await Scanner.ScanData(control, ch);
+            }
+            else
+            {
+                Console.WriteLine("Device cannot be reached.");
+            }
             Console.WriteLine();
         }
     }
