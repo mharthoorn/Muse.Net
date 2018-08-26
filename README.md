@@ -4,26 +4,29 @@ To keep your application free of external dependencies, this library does not in
 It translates the messages comming from the Muse directly from the Bluetooth channel and translates them
 into simple classes.
 
-# Platform
+## Platform
 These are dotnet core SDK projects, targeting net framework.  
 
-# WinRT bluetooth API's 
+### WinRT bluetooth API's 
 The Muse.Net library uses the Bluetooth APIs from WinRT (Uwp)
 The DLL's included in the source code and copied to the output folder.
 These libraries are not cross platform / netcoreapp compatible. 
 
-# GATT
+
+## How it works
+
+### GATT
 This library is built on top of the Gatt (Generic Attributes) interface for Bluetooth.
 https://www.bluetooth.com/specifications/gatt/generic-attributes-overview
 
-# Device output
+### Device output
 THe Muse Headset has several sensors:
 - Accelerometer (when the devices is moving)
 - Gyroscope (when the device is turning)
 - Telemetry (battery, temperature)
 - Brain waves (2 front, 2 rear + Auxilary)
 
-# Communication
+### Communication
 The device broadcasts each sensor output over a separate Gatt channel (characteristic). 
 Broadcasts only occur over channels to which your app is subscribed.
 
