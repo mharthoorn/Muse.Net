@@ -16,8 +16,7 @@ The Muse.Net library uses the Bluetooth APIs from WinRT (Uwp)
 The DLL's included in the source code and copied to the output folder.
 These libraries are not cross platform / netcoreapp compatible. 
 
-
-## How it works
+## Background
 
 ### GATT
 This library is built on top of the Gatt (Generic Attributes) interface for Bluetooth.
@@ -38,6 +37,24 @@ These libraries are normally found here:
 - C:\Program Files (x86)\Windows Kits\10\UnionMetadata\Windows.winmd
 - C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll
 
+## Usage
+```csharp
+
+            var client = new MuseClient(MyMuse.Address);
+            var ok = await client.Connect();
+            if (ok)
+            {
+                await client.Subscribe(
+                    Channel.EEG_AF7, 
+                    Channel.EEG_AF8, 
+                    Channel.EEG_TP10, 
+                    Channel.EEG_TP9,
+                    Channel.EEG_AUX);
+
+                client.NotifyEeg += Client_NotifyEeg;
+                await client.Resume();
+			}
+```
 ## Attribution
 Thanks to Carter Appleton for pointing a way to access WinRT.
 [Win10Win32Bluetooth](https://github.com/CarterAppleton/Win10Win32Bluetooth)
