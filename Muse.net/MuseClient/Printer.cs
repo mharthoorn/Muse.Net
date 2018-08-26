@@ -17,6 +17,46 @@ namespace Harthoorn.MuseClient
             Console.WriteLine($" - Temp: {t.Temperature}°C");
         }
 
+        public static void Print(Accelerometer a, bool full = false)
+        {
+            if (!full)
+            {
+                Console.WriteLine($" - Accelerometer: #{a.SequenceId} {AcceleroSample(a.Samples[0])}");
+            }
+            else
+            {
+                Console.WriteLine($" - Sequence: #{a.SequenceId}");
+
+                foreach (var sample in a.Samples)
+                    Console.WriteLine($" - Sample: {AcceleroSample(sample)}");
+            }
+        }
+
+        public static void Print(Gyroscope a, bool full = false)
+        {
+            if (!full)
+            {
+                Console.WriteLine($" - Accelerometer: #{a.SequenceId} {GyroSample(a.Samples[0])}");
+            }
+            else
+            {
+                Console.WriteLine($" - Sequence: #{a.SequenceId}");
+
+                foreach (var sample in a.Samples)
+                    Console.WriteLine($" - Sample: {GyroSample(sample)}");
+            }
+        }
+
+        public static string AcceleroSample(Vector vector)
+        {
+            return string.Format("X = {0,5:#}, Y = {1,5:#}, Z = {2,5:#}", vector.X, vector.Y, vector.Z);
+        }
+         
+        public static string GyroSample(Vector vector)
+        {
+            return string.Format("X = {0,5:0.0}, Y = {1,5:0.0}, Z = {2,5:0.0}", vector.X, vector.Y, vector.Z);
+        }
+
         public static void Print(BluetoothLEDevice device)
         {
             Console.WriteLine($"Name: {device.Name}");

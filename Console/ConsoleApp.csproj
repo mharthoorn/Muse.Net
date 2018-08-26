@@ -10,5 +10,4 @@
     <ProjectReference Include="..\Muse.Net\Muse.Net.csproj" />
   </ItemGroup>
 
-
 </Project>

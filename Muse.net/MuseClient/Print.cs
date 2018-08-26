@@ -41,9 +41,24 @@ namespace Harthoorn.MuseClient
         {
             Console.WriteLine("Telemetry");
             var bytes = buffer.ReadBytes();
-            var t = Telemetry.Parse(bytes);
+            var t = Parse.Telemetry(bytes);
             Printer.Print(t);
         }
+
+        public static void AccelerometerModel(IBuffer buffer)
+        {
+            var bytes = buffer.ReadBytes();
+            var a = Parse.Accelerometer(bytes);
+            Printer.Print(a);
+        }
+
+        public static void GyroscopeModel(IBuffer buffer)
+        { 
+            var bytes = buffer.ReadBytes();
+            var g = Parse.Gyroscope(bytes);
+            Printer.Print(g);
+        }
+        
     }
 
 }

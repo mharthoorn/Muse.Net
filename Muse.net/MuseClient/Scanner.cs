@@ -7,16 +7,16 @@ using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
 namespace Harthoorn.MuseClient
 {
-    public static class Scanner
+    public static class ConsoleScanner
     {
-        public static async Task ConsoleScan(ulong address)
+        public static async Task ReceiveLoop(ulong address)
         {
             var device = await BluetoothLEDevice.FromBluetoothAddressAsync(address);
              
             Printer.Print(device);
             var service = device.GetGattService(MuseGuid.PRIMARY_SERVICE);
 
-            var channel = service.GetCharacteristic(MuseGuid.TELEMETRY);
+            var channel = service.GetCharacteristic(MuseGuid.ACELEROMETER);
             var control = service.GetCharacteristic(MuseGuid.CONTROL);
 
             Console.WriteLine("Connecting to Muse Headband...");
@@ -25,7 +25,7 @@ namespace Harthoorn.MuseClient
 
             if (ok)
             {
-                await Scanner.ScanData(control, channel);
+                await ConsoleScanner.ReceiveData(control, channel);
             }
             else
             {
@@ -34,7 +34,7 @@ namespace Harthoorn.MuseClient
             Console.WriteLine();
         }
 
-        public static void Listen() 
+        public static void Scan() 
         {
             // Create Bluetooth Listener
             var watcher = new BluetoothLEAdvertisementWatcher();
@@ -75,7 +75,7 @@ namespace Harthoorn.MuseClient
             Console.WriteLine();
         }
 
-        public static async Task ScanData(GattCharacteristic control, GattCharacteristic characteristic)
+        public static async Task ReceiveData(GattCharacteristic control, GattCharacteristic characteristic)
         {
             
             Console.WriteLine("Listening for output. Press any ESC to stop.");
@@ -138,8 +138,15 @@ namespace Harthoorn.MuseClient
         {
             
             if (sender.Uuid.Equals(MuseGuid.TELEMETRY))
-                Print.TelemetryModel(args.CharacteristicValue); 
-            else 
+                Print.TelemetryModel(args.CharacteristicValue);
+
+            else if (sender.Uuid.Equals(MuseGuid.ACELEROMETER))
+                Print.AccelerometerModel(args.CharacteristicValue);
+
+            else if (sender.Uuid.Equals(MuseGuid.GYROSCOPE))
+                Print.GyroscopeModel(args.CharacteristicValue);
+
+            else
                 Print.Raw(args.CharacteristicValue);
         }
     }

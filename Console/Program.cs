@@ -11,7 +11,7 @@ namespace ConsoleApp
 
         static async Task Main(string[] args)
         {
-            await Scanner.ConsoleScan(MyMuse.Address);
+            await ConsoleScanner.ReceiveLoop(MyMuse.Address);
             //TestTelemetry();
             //Console.ReadKey();
 
