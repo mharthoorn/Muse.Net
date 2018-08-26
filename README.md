@@ -1,12 +1,17 @@
-# Using WinRT APIs in a Windows Desktop App
+# Muse.NET 
+This library helps you connect to the Muse Headset. The Muse broadcasts over Bluetooth LE (Low Energy).
+To keep your application free of external dependencies, this library does not include external Muse drivers. 
+It translates the messages comming from the Muse directly from the Bluetooth channel and translates them
+into simple classes.
 
-## Listening for Bluetooth Advertisements
+# Platform
+These are dotnet core SDK projects, targeting net framework.  
 
-### Setting Up
-To use the WinRT APIs, add two references:
+# WinRT bluetooth API's 
+The Muse.Net library uses the Bluetooth APIs from WinRT (Uwp)
+The DLL's included in the source code and copied to the output folder.
+These libraries are not cross platform / netcoreapp compatible. 
 
-1. C:\Program Files (x86)\Windows Kits\10\UnionMetadata\Windows.winmd
-
-2. C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll
-
-**Note:** *#2 Depends on the framework version you are using!*
+These libraries are normally found here:
+- C:\Program Files (x86)\Windows Kits\10\UnionMetadata\Windows.winmd
+- C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll
