@@ -149,7 +149,40 @@ namespace Harthoorn.MuseClient
             else
                 Print.Raw(args.CharacteristicValue);
         }
+
+        public static async Task Subscribe(ulong address, params Channel[] channels)
+        {
+            var client = new MuseClient(address);
+            var ok = await client.Connect();
+            if (ok)
+            {
+                await client.Subscribe(channels);
+                client.NotifyAccelerometer += Client_NotifyAccelerometer;
+                client.NotifyGyroscope += Client_NotifyGyroscope;
+                client.NotifyTelemetry += Client_NotifyTelemetry;
+                                await client.Resume();
+            }
+
+
+        }
+
+        private static void Client_NotifyTelemetry(Telemetry tele)
+        {
+            Printer.Print(tele);
+        }
+
+        private static void Client_NotifyGyroscope(Gyroscope gyro)
+        {
+            Printer.Print(gyro);
+        }
+
+        private static void Client_NotifyAccelerometer(Accelerometer accelerometer)
+        {
+            Printer.Print(accelerometer);
+        }
     }
+
+    
 }
 
  

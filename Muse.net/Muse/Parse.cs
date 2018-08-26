@@ -35,6 +35,12 @@ namespace Harthoorn.MuseClient
             };
         }
 
+        public static Encefalogram Encefalogram(ReadOnlySpan<byte> span)
+        {
+            throw new NotImplementedException();
+
+        }
+
         public static Vector[] Samples(ReadOnlySpan<byte> span, int count, float scale)
         {
             var samples = new Vector[3];

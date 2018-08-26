@@ -30,6 +30,12 @@ namespace Harthoorn.MuseClient
         public Vector[] Samples;
     }
 
+    public class Encefalogram
+    {
+
+    }
+
+
     public struct Vector
     {
         public float X;

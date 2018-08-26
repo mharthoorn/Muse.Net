@@ -20,7 +20,7 @@ namespace Harthoorn.MuseClient
 
     public static class Scale
     {
-        public static float GYROSCOPE= 0.0000610352f;
+        public static float GYROSCOPE = 0.0000610352f;
         public static float ACCELEROMETER = 0.0074768f;
     }
 

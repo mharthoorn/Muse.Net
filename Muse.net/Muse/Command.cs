@@ -7,5 +7,4 @@
         public const string RESUME = "d";
     }
 
-
 }

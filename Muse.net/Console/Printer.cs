@@ -11,17 +11,14 @@ namespace Harthoorn.MuseClient
     {
         public static void Print(Telemetry t)
         {
-            Console.WriteLine($" - Sequence: #{t.SequenceId}");
-            Console.WriteLine($" - Battery: {t.BatteryLevel:0.0}%");
-            Console.WriteLine($" - Voltage: {t.Voltage / 1000:0.0}V");
-            Console.WriteLine($" - Temp: {t.Temperature}°C");
+                Console.WriteLine($"#{t.SequenceId:00000000} Telemetry    : {t.BatteryLevel:0.0}% battery, {t.Voltage / 1000:0.0}V, {t.Temperature}°C");
         }
 
         public static void Print(Accelerometer a, bool full = false)
         {
             if (!full)
             {
-                Console.WriteLine($" - Accelerometer: #{a.SequenceId} {AcceleroSample(a.Samples[0])}");
+                Console.WriteLine($"#{a.SequenceId:00000000} Accelerometer: {AcceleroSample(a.Samples[0])}");
             }
             else
             {
@@ -36,7 +33,7 @@ namespace Harthoorn.MuseClient
         {
             if (!full)
             {
-                Console.WriteLine($" - Accelerometer: #{a.SequenceId} {GyroSample(a.Samples[0])}");
+                Console.WriteLine($"#{a.SequenceId:00000000} Gyroscope     : {GyroSample(a.Samples[0])}");
             }
             else
             {
