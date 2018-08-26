@@ -55,8 +55,8 @@ namespace Harthoorn.MuseClient
             return string.Format("X = {0,5:0.0}, Y = {1,5:0.0}, Z = {2,5:0.0}", vector.X, vector.Y, vector.Z);
         }
 
-        static int m = 0;
-        public static void Print(Encefalogram gram)
+        static int m = 0; 
+        public static void PrintEeg(Encefalogram gram)
         {
             //Console.WriteLine("--------------------------------------------");
             m = ++m % 11;

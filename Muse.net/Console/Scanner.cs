@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
@@ -99,7 +100,7 @@ namespace Harthoorn.MuseClient
                     var data = result.Value;
                     if (data != null)
                     {
-                        var bytes = data.ReadBytes();
+                        var bytes = data.ToArray();
                         var s = Encoding.UTF8.GetString(bytes).Replace('\n', '.');
                         //Console.Write($"<{s}>");
                     }
@@ -169,7 +170,7 @@ namespace Harthoorn.MuseClient
 
         private static void Client_NotifyEeg(Channel arg1, Encefalogram gram)
         {
-            Printer.Print(gram);
+            Printer.PrintEeg(gram);
         }
 
         private static void Client_NotifyTelemetry(Telemetry tele)

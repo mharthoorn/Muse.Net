@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
@@ -123,7 +124,7 @@ namespace Harthoorn.MuseClient
 
         private void Notify(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
-            var bytes = args.CharacteristicValue.ReadBytes();
+            var bytes = args.CharacteristicValue.ToArray();
             var channel = GetChannel(sender);
             switch (channel)
             {
