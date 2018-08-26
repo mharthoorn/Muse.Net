@@ -1,15 +1,8 @@
 ﻿namespace Harthoorn.MuseClient
 {
-    public static class Command
-    {
-        public const string START = "s";
-        public const string PAUSE = "h";
-        public const string RESUME = "d";
-    }
-
     public static class Preset
     {
-        
+        // Defines how the devices operatates. Choose to (also) measure accelerometer and auxiliary brain wave sensor.   
         public const string AUX_ACELEROMETER = "p20"; 
         public const string ACELEROMETER = "p21";
         public const string NEITHER = "p22";

@@ -17,10 +17,10 @@ namespace Harthoorn.MuseClient
 
         public async static Task<bool> Start(this GattCharacteristic control, GattCharacteristic c)
         {
-            //var ok = await control.WriteCommand(Command.PAUSE);
+            var ok = await control.WriteCommand(Command.PAUSE);
 
-            //if (ok)
-            var ok = await control.WriteCommand(Preset.ACELEROMETER);
+            if (ok)
+                ok = await control.WriteCommand(Preset.ACELEROMETER);
 
             if (ok)
                 ok = await control.WriteCommand(Command.START);
