@@ -40,20 +40,20 @@ These libraries are normally found here:
 ## Usage
 ```csharp
 
-            var client = new MuseClient(MyMuse.Address);
-            var ok = await client.Connect();
-            if (ok)
-            {
-                await client.Subscribe(
-                    Channel.EEG_AF7, 
-                    Channel.EEG_AF8, 
-                    Channel.EEG_TP10, 
-                    Channel.EEG_TP9,
-                    Channel.EEG_AUX);
+	var client = new MuseClient(MyMuse.Address);
+	var ok = await client.Connect();
+	if (ok)
+	{
+		await client.Subscribe(
+			Channel.EEG_AF7, 
+			Channel.EEG_AF8, 
+			Channel.EEG_TP10, 
+			Channel.EEG_TP9,
+			Channel.EEG_AUX);
 
-                client.NotifyEeg += Client_NotifyEeg;
-                await client.Resume();
-			}
+		client.NotifyEeg += Client_NotifyEeg;
+		await client.Resume();
+	}
 ```
 ## Attribution
 Thanks to Carter Appleton for pointing a way to access WinRT.
