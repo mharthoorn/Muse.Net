@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
 
@@ -8,6 +9,31 @@ namespace Harthoorn.MuseClient
 {
     public static class Scanner
     {
+        public static async Task ConsoleScan(ulong address)
+        {
+            var device = await BluetoothLEDevice.FromBluetoothAddressAsync(address);
+             
+            Printer.Print(device);
+            var service = device.GetGattService(MuseGuid.PRIMARY_SERVICE);
+
+            var channel = service.GetCharacteristic(MuseGuid.TELEMETRY);
+            var control = service.GetCharacteristic(MuseGuid.CONTROL);
+
+            Console.WriteLine("Connecting to Muse Headband...");
+
+            bool ok = await control.Start(channel);
+
+            if (ok)
+            {
+                await Scanner.ScanData(control, channel);
+            }
+            else
+            {
+                Console.WriteLine("Device cannot be reached.");
+            }
+            Console.WriteLine();
+        }
+
         public static void Listen() 
         {
             // Create Bluetooth Listener
@@ -44,8 +70,8 @@ namespace Harthoorn.MuseClient
 
             Console.WriteLine($"  FR_NAME: {eventArgs.Advertisement.LocalName}");
             Console.WriteLine($"  DBm: {eventArgs.RawSignalStrengthInDBm}");
-            Print.AdvertisementData(eventArgs.Advertisement.DataSections);
-            Print.ManufacturerData(eventArgs.Advertisement.ManufacturerData);
+            Printer.Print(eventArgs.Advertisement.DataSections);
+            Printer.Print(eventArgs.Advertisement.ManufacturerData);
             Console.WriteLine();
         }
 
@@ -110,8 +136,11 @@ namespace Harthoorn.MuseClient
 
         private static void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
-            Print.TelemetryModel(args.CharacteristicValue);
-            //Print.Raw(args.CharacteristicValue);
+            
+            if (sender.Uuid.Equals(MuseGuid.TELEMETRY))
+                Print.TelemetryModel(args.CharacteristicValue); 
+            else 
+                Print.Raw(args.CharacteristicValue);
         }
     }
 }
