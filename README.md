@@ -37,3 +37,9 @@ Broadcasts only occur over channels to which your app is subscribed.
 These libraries are normally found here:
 - C:\Program Files (x86)\Windows Kits\10\UnionMetadata\Windows.winmd
 - C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll
+
+## Attribution
+Thanks to Carter Appleton for pointing a way to access WinRT.
+[Win10Win32Bluetooth](https://github.com/CarterAppleton/Win10Win32Bluetooth)
+
+A lot of the technology in this library has been based on [muse-js](https://github.com/urish/muse-js)
