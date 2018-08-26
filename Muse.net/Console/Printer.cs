@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.Advertisement;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
@@ -52,6 +53,40 @@ namespace Harthoorn.MuseClient
         public static string GyroSample(Vector vector)
         {
             return string.Format("X = {0,5:0.0}, Y = {1,5:0.0}, Z = {2,5:0.0}", vector.X, vector.Y, vector.Z);
+        }
+
+        static int m = 0;
+        public static void Print(Encefalogram gram)
+        {
+            //Console.WriteLine("--------------------------------------------");
+            m = ++m % 11;
+            if (m == 0)
+            {
+                Console.WriteLine(Floats(gram.Samples));
+                //var hex = BitConverter.ToString(gram.Raw);
+                //Console.WriteLine(hex);
+
+                //const int amplitude = 0x800, screen = 40;
+                //foreach (var sample in gram.Samples)
+                //{
+                //    float value = (sample * screen / amplitude) + (screen / 2);
+                //    int count = (int)value;
+                //    var s = new string('*', count);
+                //    Console.WriteLine("> " + s);
+                //}
+            }
+
+        }
+
+        public static string Floats(float[] floats)
+        {
+            var b = new StringBuilder();
+            foreach(var f in floats)
+            {
+                b.Append(string.Format("{0,-7:#####.##}", f));
+                b.Append("  ");
+            }
+            return b.ToString();
         }
 
         public static void Print(BluetoothLEDevice device)

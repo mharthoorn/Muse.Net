@@ -136,7 +136,7 @@ namespace Harthoorn.MuseClient
 
         private static void Characteristic_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
         {
-            
+
             if (sender.Uuid.Equals(MuseGuid.TELEMETRY))
                 Print.TelemetryModel(args.CharacteristicValue);
 
@@ -146,11 +146,13 @@ namespace Harthoorn.MuseClient
             else if (sender.Uuid.Equals(MuseGuid.GYROSCOPE))
                 Print.GyroscopeModel(args.CharacteristicValue);
 
+            
+
             else
                 Print.Raw(args.CharacteristicValue);
         }
 
-        public static async Task Subscribe(ulong address, params Channel[] channels)
+        public static async Task Listen(ulong address, params Channel[] channels)
         {
             var client = new MuseClient(address);
             var ok = await client.Connect();
@@ -160,10 +162,14 @@ namespace Harthoorn.MuseClient
                 client.NotifyAccelerometer += Client_NotifyAccelerometer;
                 client.NotifyGyroscope += Client_NotifyGyroscope;
                 client.NotifyTelemetry += Client_NotifyTelemetry;
-                                await client.Resume();
+                client.NotifyEeg += Client_NotifyEeg;
+                await client.Resume();
             }
+        }
 
-
+        private static void Client_NotifyEeg(Channel arg1, Encefalogram gram)
+        {
+            Printer.Print(gram);
         }
 
         private static void Client_NotifyTelemetry(Telemetry tele)
@@ -180,6 +186,8 @@ namespace Harthoorn.MuseClient
         {
             Printer.Print(accelerometer);
         }
+
+
     }
 
     

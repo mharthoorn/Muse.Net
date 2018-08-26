@@ -21,7 +21,7 @@ namespace BluetoothCore
         }
 
         [TestMethod]
-        public void TestAccelerometer()
+        public void TestGyroscope()
         {
             var array = new byte[] {
                 82, 109,    // sequence
@@ -30,7 +30,7 @@ namespace BluetoothCore
                 183, 17, 227, 60, 143   // sample 3
             }; 
 
-            var a = Parse.Accelerometer(array);
+            var a = Parse.Gyroscope(array);
             Assert.AreEqual(21101, a.SequenceId);
 
             Assert.AreEqual(0.2139894112f, a.Samples[0].X);
@@ -45,6 +45,21 @@ namespace BluetoothCore
             Assert.AreEqual(0.27948018080000003f, a.Samples[2].Y);
             Assert.AreEqual(0.9462287056f, a.Samples[2].Z);
 
+        }
+
+        [TestMethod]
+        public void TestGram()
+        {
+
+            var array = new byte[] { 87, 33, 192, 82, 73, 6, 106, 242, 49, 64, 88, 153, 128, 66, 254, 44, 119, 157 };
+            var correct = new int[] { 1394, 448, 1316, 2310, 1711, 561, 1029, 2201, 2052, 766, 711, 1949 };
+
+            var g = Parse.EegSamples(array);
+
+            for (int i = 0; i < 12; i++)
+            {
+                Assert.AreEqual(correct[i], g[i]);
+            }
         }
     }
 }

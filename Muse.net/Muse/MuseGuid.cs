@@ -18,10 +18,4 @@ namespace Harthoorn.MuseClient
         public static readonly Guid EEG_AUX = new Guid("273e0007-4c4d-454d-96be-f03bac821358");
     }
 
-    public static class Scale
-    {
-        public static float GYROSCOPE = 0.0000610352f;
-        public static float ACCELEROMETER = 0.0074768f;
-    }
-
 }

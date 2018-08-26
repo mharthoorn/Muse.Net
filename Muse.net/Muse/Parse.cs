@@ -17,6 +17,8 @@ namespace Harthoorn.MuseClient
             };
         }
 
+
+
         public static Gyroscope Gyroscope(ReadOnlySpan<byte> span)
         { 
             return new Gyroscope
@@ -37,9 +39,49 @@ namespace Harthoorn.MuseClient
 
         public static Encefalogram Encefalogram(ReadOnlySpan<byte> span)
         {
-            throw new NotImplementedException();
-
+            var samples = EegSamples(span.Slice(2));
+            //ScaleEeg(samples);
+            return new Encefalogram
+            {
+                Index = UShort(span, 0),
+                Timestamp = DateTimeOffset.Now,
+                Samples = samples,
+                Raw = span.ToArray()
+            };
         }
+
+        public static float[] EegSamples(ReadOnlySpan<byte> span)
+        {
+            var len = span.Length * 2 / 3;
+            float[] samples = new float[len];
+            int j = 0;
+
+            for (int i = 0; i < len; i++)
+            {
+                int n;
+                if (i % 2 == 0)
+                {
+                    n = (span[j] << 4) | (span[j + 1] >> 4);
+                    j += 2;
+                }
+                else
+                {
+                    n = ((span[j - 1] & 0xF) << 8) | span[j];
+                    j++;
+                }
+                samples[i] = n;
+            }
+            return samples;
+        }
+
+        public static void ScaleEeg(float[] samples)
+        {
+            for (int i = 0; i < samples.Length; i++)
+            {
+                samples[i] = Scale.EEG * (samples[i] - Scale.EEG_OFSET); 
+            }
+        }
+        
 
         public static Vector[] Samples(ReadOnlySpan<byte> span, int count, float scale)
         {
