@@ -3,6 +3,7 @@ This library helps you connect to the Muse Headset.
 http://www.choosemuse.com/
 
 The Muse broadcasts over Bluetooth LE (Low Energy).
+
 To keep your application free of external dependencies, this library does not include external Muse drivers. 
 It translates the messages comming from the Muse directly from the Bluetooth channel and translates them
 into simple classes.
