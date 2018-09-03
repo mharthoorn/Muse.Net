@@ -11,6 +11,7 @@ namespace Harthoorn.MuseClient
     {
         public string Name { get; private set; }
         public ulong Address { get; private set; }
+        public bool Connected { get; private set; } = false;
 
         public MuseClient(ulong address)
         {
@@ -57,6 +58,7 @@ namespace Harthoorn.MuseClient
             ch_EEG_TP10 = service.GetCharacteristic(MuseGuid.EEG_TP10);
             ch_EEG_AUX = service.GetCharacteristic(MuseGuid.EEG_AUX);
 
+            Connected = true;
             return true;
         }
 
@@ -75,7 +77,8 @@ namespace Harthoorn.MuseClient
 
         public async Task Start()
         {
-            await ch_control.WriteCommand(Command.START); 
+            await ch_control.WriteCommand(Command.START);
+            
         }
 
         public async Task Pause()
