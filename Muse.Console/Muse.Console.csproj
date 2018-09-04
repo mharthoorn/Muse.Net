@@ -11,11 +11,4 @@
     <ProjectReference Include="..\Muse.Net\Muse.Net.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="Windows">
-      <HintPath>..\Muse.Net\Uwp\Windows.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-    </Reference>
-  </ItemGroup>
-
 </Project>
