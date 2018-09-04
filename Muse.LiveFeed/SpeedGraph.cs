@@ -30,7 +30,7 @@ namespace Muse.LiveFeed
             graphics = this.CreateGraphics();
             timer = new Timer();
             timer.Enabled = true;
-            timer.Interval = 10;
+            timer.Interval = 100;
             timer.Tick += Timer_Tick;
 
             this.Paint += SpeedGraph_Paint;
@@ -81,20 +81,25 @@ namespace Muse.LiveFeed
             
         }
 
+        const float MAX = 0x800; 
+        const float AMPLITUDE = MAX / 2;
+
         public void Draw(Graphics graphics, IList<float> data, Color color, int offset, int height)
         {
             graphics.DrawLine(new Pen(color, 4), 10, offset, 10, offset + height);
 
             int count = data.Count;
-            float factor = (float)height / 0x400;
+            float factor = (float)height / AMPLITUDE;
             Pen pen = new Pen(color);
 
             int xa = 0, ya = 0;
             bool first = true;
             for (int x = 0; x < count; x++)
             {
-                float actual = data[x]-0x400;
-                int y = offset + (int)(actual * factor);
+                float value = data[x];
+                float actual = data[x] - AMPLITUDE;
+                int v = (int)(factor * actual / AMPLITUDE); // should be v < height
+                int y = (offset - v);
                 
                 if (first)
                 {

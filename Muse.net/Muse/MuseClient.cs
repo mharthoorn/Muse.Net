@@ -4,6 +4,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
+using Windows.Foundation;
 
 namespace Harthoorn.MuseClient
 {
@@ -62,9 +63,14 @@ namespace Harthoorn.MuseClient
             return true;
         }
 
+        public async Task Disconnect()
+        {
+            await UnsubscribeAll();
+        }
+
         public async Task Subscribe(params Channel[] channels)
         {
-            foreach(var channel in channels)
+            foreach (var channel in channels)
             {
                 await SubscribeToChannel(channel);
             }
@@ -72,23 +78,23 @@ namespace Harthoorn.MuseClient
 
         public async Task Resume()
         {
-            await ch_control.WriteCommand(Command.RESUME); 
+            await ch_control.WriteCommand(MuseCommand.RESUME);
         }
 
         public async Task Start()
         {
-            await ch_control.WriteCommand(Command.START);
-            
+            await ch_control.WriteCommand(MuseCommand.START);
+
         }
 
         public async Task Pause()
         {
-            await ch_control.WriteCommand(Command.PAUSE); 
+            await ch_control.WriteCommand(MuseCommand.PAUSE);
         }
 
         public async Task UnsubscribeAll()
         {
-            foreach(var channel in Subscriptions)
+            foreach (var channel in Subscriptions)
             {
                 await UnsubscribeFromChannel(channel);
             }
@@ -97,7 +103,7 @@ namespace Harthoorn.MuseClient
         public async Task<bool> SubscribeToChannel(Channel channel)
         {
             var characteristic = GetCharacteristic(channel);
-            var status =  await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
+            var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
             var ok = (status == GattCommunicationStatus.Success);
 
             if (ok)
@@ -139,9 +145,78 @@ namespace Harthoorn.MuseClient
                 case Channel.EEG_TP9:
                 case Channel.EEG_TP10:
                 case Channel.EEG_AUX: TriggerNotifyEeg(channel, bytes); break;
+
+            }
+        }
+
+
+        private async Task<bool> SubscribeEvent(Channel channel, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> handler)
+        {
+            var characteristic = GetCharacteristic(channel);
+            var descriptor = await characteristic.ReadClientCharacteristicConfigurationDescriptorAsync();
+            bool alreadyOn = (descriptor.ClientCharacteristicConfigurationDescriptor == GattClientCharacteristicConfigurationDescriptorValue.Notify);
+            bool ok;
+
+            if (!alreadyOn)
+            {
+                var status = await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
+                ok = status == GattCommunicationStatus.Success;
+            }
+            else ok = true;
+
+            if (ok) characteristic.ValueChanged += handler;
+
+            return alreadyOn;
+        }
+
+        private async Task UnsubscribeEvent(Channel channel, TypedEventHandler<GattCharacteristic, GattValueChangedEventArgs> handler, bool keepOn)
+        {
+            if (handler != null)
+            {
+                var characteristic = GetCharacteristic(channel);
+                characteristic.ValueChanged -= handler;
+                if (!keepOn)
+                    await characteristic.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.None);
                 
             }
         }
+
+        /// <summary>
+        /// Awaits one channel event and returns the resulting buffer. 
+        /// </summary>
+        /// <param name="channel"></param>
+        public async Task<byte[]> SingleChannelEventAsync(Channel channel)
+        {
+            var completion = new TaskCompletionSource<byte[]>();
+
+            bool keep = await SubscribeEvent(channel, NotifyTaskCompletion);
+
+            var result = await completion.Task;
+
+            await UnsubscribeEvent(channel, NotifyTaskCompletion, keep);
+
+            return result;
+
+
+            void NotifyTaskCompletion(GattCharacteristic sender, GattValueChangedEventArgs args)
+            {
+                var bytes = args.CharacteristicValue.ToArray();
+                completion.SetResult(bytes);
+            }
+        }
+
+     
+
+        public async Task<Telemetry> ReadTelemetryAsync()
+        {
+            var bytes = await SingleChannelEventAsync(Channel.Telemetry);
+            if (bytes != null)
+            {
+                return Parse.Telemetry(bytes);
+            }
+            else return null;
+        }
+
 
         private void TriggerNotifyEeg(Channel channel, ReadOnlySpan<byte> bytes)
         { 

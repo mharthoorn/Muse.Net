@@ -17,8 +17,6 @@ namespace Harthoorn.MuseClient
             };
         }
 
-
-
         public static Gyroscope Gyroscope(ReadOnlySpan<byte> span)
         { 
             return new Gyroscope
