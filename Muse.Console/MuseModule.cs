@@ -9,22 +9,29 @@ namespace ConsoleApp
     public class MuseModule
     {
 
-        [Command]
+        [Command("Show name and version")]
         public void Info()
         {
-            Console.WriteLine("Muse.Net Console Utils 0.1");
-            Console.WriteLine("Commands: telemetry");
+            Console.WriteLine("Muse.Net Console Utils 0.3");
+            Console.WriteLine("Copyright (c) 2018 M.Harthoorn");
         }
 
-        [Command]
+        [Command("Show available commands", "?")]
+        public void Help()
+        {
+            var routes = Program.Router.Routes;
+            Shell.Routing.Print.PrintRoutes(routes);
+        }
+
+        [Command("Show telemetry output of the Muse")]
         public void Telemetry()
         {
             var telemetry = TelemetryAsync().Result;
             if (telemetry != null)
-                Print.Telemetry(telemetry);
+                Harthoorn.MuseClient.Print.Telemetry(telemetry);
         }
 
-        [Command("Find your Muse address")]
+        [Command("Scan BLE devices. Find your Muse address")]
         public static void Scan()
         {
             Console.WriteLine("Scanning for devices. Turn on your Muse now. Press any key to stop.");
