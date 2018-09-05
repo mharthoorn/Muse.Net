@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace Muse.LiveFeed
         Graphics graphics;
         Bitmap bitmap;
         Timer timer;
+        bool update = true;
 
         Dictionary<Channel, List<float>> data = new Dictionary<Channel, List<float>>()
         {
@@ -27,10 +29,11 @@ namespace Muse.LiveFeed
         public SpeedGraph()
         {
             this.DoubleBuffered = true;
+            this.BackColor = Color.Black;
             graphics = this.CreateGraphics();
             timer = new Timer();
             timer.Enabled = true;
-            timer.Interval = 100;
+            timer.Interval = 50;
             timer.Tick += Timer_Tick;
 
             this.Paint += SpeedGraph_Paint;
@@ -43,7 +46,7 @@ namespace Muse.LiveFeed
         {
             lock (data)
             {
-                this.Invalidate();
+                if (update) this.Invalidate();
             }
 
         }
@@ -52,15 +55,16 @@ namespace Muse.LiveFeed
         {
             lock (data)
             {
+                update = false;
                 bitmap = new Bitmap(this.Width, this.Height);
                 var graphics = Graphics.FromImage(bitmap);
                 graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
                 graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.GammaCorrected;
                 graphics.Clear(Color.Black);
-                Draw(graphics, data[Channel.EEG_AF7], Color.Green, 20, 100);
-                Draw(graphics, data[Channel.EEG_AF8], Color.Blue, 120, 100);
-                Draw(graphics, data[Channel.EEG_TP9], Color.Red, 220, 100);
-                Draw(graphics, data[Channel.EEG_TP10], Color.Yellow, 320, 100);
+                Draw(graphics, data[Channel.EEG_AF7], Color.LightGreen, 20, 100);
+                Draw(graphics, data[Channel.EEG_AF8], Color.LightSkyBlue, 140, 100);
+                Draw(graphics, data[Channel.EEG_TP9], Color.OrangeRed, 260, 100);
+                Draw(graphics, data[Channel.EEG_TP10], Color.LightYellow, 380, 100);
 
                 e.Graphics.DrawImage(bitmap, 1, 1);
             }
@@ -76,31 +80,38 @@ namespace Muse.LiveFeed
                 set.AddRange(values);
                 int cut = Math.Max(0, set.Count - max);
                 if (cut > 0) set.RemoveRange(0, cut);
-
+                update = true;
             }
             
         }
 
-        const float MAX = 0x800; 
-        const float AMPLITUDE = MAX / 2;
+        const float AMPLITUDE = 0x800; 
 
         public void Draw(Graphics graphics, IList<float> data, Color color, int offset, int height)
         {
-            graphics.DrawLine(new Pen(color, 4), 10, offset, 10, offset + height);
+            graphics.CompositingQuality = CompositingQuality.HighSpeed;
+            var axispen = new Pen(Color.Gray, 1);
+
+            graphics.DrawLine(axispen, 10, offset, 10, offset + height);
+            Pen pen = new Pen(color);
+
+            int ymax = height / 2;
+            int y0 = offset + (int)ymax;
+            graphics.DrawLine(axispen, 0, y0, this.Width, y0);
 
             int count = data.Count;
-            float factor = (float)height / AMPLITUDE;
-            Pen pen = new Pen(color);
+
+            float factor = (float)ymax / AMPLITUDE;
 
             int xa = 0, ya = 0;
             bool first = true;
-            for (int x = 0; x < count; x++)
+            for (int x = 0; x < data.Count; x++)
             {
                 float value = data[x];
-                float actual = data[x] - AMPLITUDE;
-                int v = (int)(factor * actual / AMPLITUDE); // should be v < height
-                int y = (offset - v);
-                
+                float actual = value - AMPLITUDE;
+                int v = (int)(factor * actual); // should be v < height
+                int y = y0 - v;
+
                 if (first)
                 {
                     first = false;
