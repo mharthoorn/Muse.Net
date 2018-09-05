@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
+    <Title>Muse.Net </Title>
+    <Version>0.2.0</Version>
+
+    <Description>Connecting to the Muse Headband over Bluetooth LE with easily useable interface.</Description>
+    <Authors>M. Harthoorn</Authors>
+    <RepositoryUrl>https://github.com/mharthoorn/Muse.Net</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/mharthoorn/Muse.Net</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,7 +30,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.1" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.1" />
   </ItemGroup>
 
 
