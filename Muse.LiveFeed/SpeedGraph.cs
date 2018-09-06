@@ -17,6 +17,8 @@ namespace Muse.LiveFeed
         Timer timer;
         bool update = true;
 
+        public float Zoom = 1;
+
         Dictionary<Channel, List<float>> data = new Dictionary<Channel, List<float>>()
         {
             { Channel.EEG_AF7, new List<float>() },
@@ -29,11 +31,11 @@ namespace Muse.LiveFeed
         public SpeedGraph()
         {
             //this.DoubleBuffered = true;
-            this.BackColor = Color.Black;
+            this.BackColor = Color.Green;
             graphics = this.CreateGraphics();
             timer = new Timer();
             timer.Enabled = true;
-            timer.Interval = 200;
+            timer.Interval = 100;
             timer.Tick += Timer_Tick;
 
             this.Paint += SpeedGraph_Paint;
@@ -62,7 +64,7 @@ namespace Muse.LiveFeed
                 Draw(graphics, data[Channel.EEG_AF7], Color.LightGreen, 20, 100);
                 Draw(graphics, data[Channel.EEG_AF8], Color.LightSkyBlue, 140, 100);
                 Draw(graphics, data[Channel.EEG_TP9], Color.OrangeRed, 260, 100);
-                Draw(graphics, data[Channel.EEG_TP10], Color.LightYellow, 380, 100);
+                Draw(graphics, data[Channel.EEG_TP10], Color.Purple, 380, 100);
 
                 e.Graphics.DrawImage(bitmap, 1, 1);
                 update = false;
@@ -93,27 +95,25 @@ namespace Muse.LiveFeed
 
         public void Draw(Graphics graphics, IList<float> data, Color color, int offset, int height)
         {
-            
             var axispen = new Pen(Color.Gray, 1);
-
             graphics.DrawLine(axispen, 10, offset, 10, offset + height);
-            Pen pen = new Pen(color);
 
             int ymax = height / 2;
             int y0 = offset + (int)ymax;
             graphics.DrawLine(axispen, 0, y0, this.Width, y0);
 
-            int count = data.Count;
 
-            float factor = (float)ymax / AMPLITUDE;
+            float factor = Zoom * (float)ymax / AMPLITUDE;
 
             int xa = 0, ya = 0;
-            bool first = true;
+            int count = data.Count;
 
+            Pen pen = new Pen(color);
             for (int x = 0; x < data.Count; x++)
             {
                 float actual = data[x] - AMPLITUDE;
-                int v = (int)(factor * actual); 
+                int v = (int)(factor * actual);
+                v = Math.Min(ymax, v); v = Math.Max(-ymax, v);
                 int y = y0 - v;
 
                 if (x > 0)
@@ -122,8 +122,7 @@ namespace Muse.LiveFeed
                 }
                 xa = x; ya = y;
             }
-            var brush = new SolidBrush(Color.White);
-            var font = new Font("Arial", 12);
+           
         }
     }
 

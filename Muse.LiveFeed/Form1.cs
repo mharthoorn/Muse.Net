@@ -75,7 +75,10 @@ namespace Muse.LiveFeed
             
         }
 
-      
+        private void button1_Click(object sender, EventArgs e)
+        {
+            graph.Zoom += 2;
+        }
     }
 
 }

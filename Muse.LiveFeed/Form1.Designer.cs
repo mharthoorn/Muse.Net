@@ -30,10 +30,11 @@
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.graph = new Muse.LiveFeed.SpeedGraph();
             this.btnPause = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
             this.btnStart = new System.Windows.Forms.Button();
+            this.btnZoom = new System.Windows.Forms.Button();
+            this.graph = new Muse.LiveFeed.SpeedGraph();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -55,6 +56,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnZoom);
             this.panel1.Controls.Add(this.btnPause);
             this.panel1.Controls.Add(this.lblStatus);
             this.panel1.Controls.Add(this.btnStart);
@@ -63,14 +65,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1164, 29);
             this.panel1.TabIndex = 5;
-            // 
-            // graph
-            // 
-            this.graph.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.graph.Location = new System.Drawing.Point(3, 38);
-            this.graph.Name = "graph";
-            this.graph.Size = new System.Drawing.Size(1164, 614);
-            this.graph.TabIndex = 6;
             // 
             // btnPause
             // 
@@ -101,6 +95,25 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
+            // btnZoom
+            // 
+            this.btnZoom.Location = new System.Drawing.Point(545, 3);
+            this.btnZoom.Name = "btnZoom";
+            this.btnZoom.Size = new System.Drawing.Size(75, 23);
+            this.btnZoom.TabIndex = 5;
+            this.btnZoom.Text = "Zoom";
+            this.btnZoom.UseVisualStyleBackColor = true;
+            this.btnZoom.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // graph
+            // 
+            this.graph.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
+            this.graph.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.graph.Location = new System.Drawing.Point(3, 38);
+            this.graph.Name = "graph";
+            this.graph.Size = new System.Drawing.Size(1164, 614);
+            this.graph.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -124,6 +137,7 @@
         private System.Windows.Forms.Button btnPause;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.Button btnZoom;
     }
 }
 
