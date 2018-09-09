@@ -15,7 +15,7 @@ namespace Muse.LiveFeed
         Graphics graphics;
         Bitmap bitmap;
         Timer timer;
-        bool update = true;
+        int updates = 0;
 
         public float Zoom = 1;
 
@@ -27,6 +27,9 @@ namespace Muse.LiveFeed
             { Channel.EEG_TP10, new List<float>() },
             { Channel.EEG_AUX, new List<float>() },
         };
+
+        List<float> FFT_A = new List<float>();
+        List<float> FFT_B = new List<float>();
 
         public SpeedGraph()
         {
@@ -47,7 +50,7 @@ namespace Muse.LiveFeed
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            if (update) this.Invalidate();
+            if (updates > 4) this.Invalidate();
             
 
         }
@@ -61,16 +64,19 @@ namespace Muse.LiveFeed
                 graphics.SmoothingMode = SmoothingMode.AntiAlias;
                 graphics.CompositingQuality = CompositingQuality.HighSpeed;
                 graphics.CompositingMode = CompositingMode.SourceCopy;
-                Draw(graphics, data[Channel.EEG_AF7], Color.LightGreen, 20, 100);
-                Draw(graphics, data[Channel.EEG_AF8], Color.LightSkyBlue, 140, 100);
-                Draw(graphics, data[Channel.EEG_TP9], Color.OrangeRed, 260, 100);
-                Draw(graphics, data[Channel.EEG_TP10], Color.Purple, 380, 100);
+                Draw(graphics, data[Channel.EEG_AF7], Color.DodgerBlue, 20, 100, Zoom);
+                Draw(graphics, data[Channel.EEG_AF8], Color.LightGreen, 140, 100, Zoom);
+                Draw(graphics, data[Channel.EEG_TP9], Color.DarkOrange, 260, 100, Zoom);
+                Draw(graphics, data[Channel.EEG_TP10], Color.DarkOrange, 380, 100, Zoom);
+                DrawFFT(graphics, FFT_A, Color.DodgerBlue, 500, 100, 1);
+                DrawFFT(graphics, FFT_B, Color.DarkOrange, 500, 100, 1);
 
                 e.Graphics.DrawImage(bitmap, 1, 1);
-                update = false;
+                updates = 0;
             }
         }
 
+        int m = 0;
         public void Append(Channel channel, float[] values)
         {
             lock (data)
@@ -80,7 +86,24 @@ namespace Muse.LiveFeed
                 
                 set.AddRange(values);
                 LimitFromStart(set, this.Width);
-                update = true;
+
+                m = (m + 1) % 30;
+                if (m == 1)
+                {
+
+                    var datum = data[Channel.EEG_AF7];
+                    var len = datum.Count;
+                    const int SIZE = 300;
+
+                    var d = datum.Skip(len - SIZE).Take(SIZE).ToArray();
+                    FFT_A = Fourier.DFT(d).Magnitudes().ToList();
+
+                    datum = data[Channel.EEG_TP9];
+                    d = datum.Skip(len - SIZE).Take(SIZE).ToArray();
+                    FFT_B = Fourier.DFT(d).Magnitudes().ToList();
+                }
+
+                updates += 1;
             }
             
         }
@@ -93,7 +116,7 @@ namespace Muse.LiveFeed
 
         const float AMPLITUDE = 0x800; 
 
-        public void Draw(Graphics graphics, IList<float> data, Color color, int offset, int height)
+        public void Draw(Graphics graphics, IList<float> data, Color color, int offset, int height, float zoom)
         {
             var axispen = new Pen(Color.Gray, 1);
             graphics.DrawLine(axispen, 10, offset, 10, offset + height);
@@ -103,7 +126,7 @@ namespace Muse.LiveFeed
             graphics.DrawLine(axispen, 0, y0, this.Width, y0);
 
 
-            float factor = Zoom * (float)ymax / AMPLITUDE;
+            float factor = zoom * (float)ymax / AMPLITUDE;
 
             int xa = 0, ya = 0;
             int count = data.Count;
@@ -123,6 +146,39 @@ namespace Muse.LiveFeed
                 xa = x; ya = y;
             }
            
+        }
+
+        public void DrawFFT(Graphics graphics, IList<float> data, Color color, int offset, int height, float zoom)
+        {
+            var axispen = new Pen(Color.Gray, 1);
+            graphics.DrawLine(axispen, 10, offset, 10, offset + height);
+
+            int y0 = offset + height;
+            graphics.DrawLine(axispen, 0, offset + height, this.Width, offset + height);
+
+
+            float factor = zoom * (float)height / AMPLITUDE;
+
+            int x0 = 10;
+            int xa = 0, ya = height;
+            int count = data.Count;
+
+            Pen pen = new Pen(color, 2);
+            for (int x = 0; x < data.Count /2; x+= 3)
+            {
+                float actual = data[x] / 6;
+                int v = (int)(factor * actual);
+                v = Math.Min(height, v); //v = Math.Max(0, v);
+                
+                int y = y0 - v;
+
+                if (x > 0)
+                {
+                    graphics.DrawLine(pen, x0 + xa*2, ya, x0 + x*2, y);
+                }
+                xa = x; ya = y;
+            }
+
         }
     }
 

@@ -30,10 +30,10 @@
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnZoom = new System.Windows.Forms.Button();
             this.btnPause = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
             this.btnStart = new System.Windows.Forms.Button();
-            this.btnZoom = new System.Windows.Forms.Button();
             this.graph = new Muse.LiveFeed.SpeedGraph();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -66,6 +66,16 @@
             this.panel1.Size = new System.Drawing.Size(1164, 29);
             this.panel1.TabIndex = 5;
             // 
+            // btnZoom
+            // 
+            this.btnZoom.Location = new System.Drawing.Point(545, 3);
+            this.btnZoom.Name = "btnZoom";
+            this.btnZoom.Size = new System.Drawing.Size(75, 23);
+            this.btnZoom.TabIndex = 5;
+            this.btnZoom.Text = "Zoom";
+            this.btnZoom.UseVisualStyleBackColor = true;
+            this.btnZoom.Click += new System.EventHandler(this.button1_Click);
+            // 
             // btnPause
             // 
             this.btnPause.Location = new System.Drawing.Point(84, 3);
@@ -95,16 +105,6 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
-            // btnZoom
-            // 
-            this.btnZoom.Location = new System.Drawing.Point(545, 3);
-            this.btnZoom.Name = "btnZoom";
-            this.btnZoom.Size = new System.Drawing.Size(75, 23);
-            this.btnZoom.TabIndex = 5;
-            this.btnZoom.Text = "Zoom";
-            this.btnZoom.UseVisualStyleBackColor = true;
-            this.btnZoom.Click += new System.EventHandler(this.button1_Click);
-            // 
             // graph
             // 
             this.graph.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(24)))), ((int)(((byte)(24)))), ((int)(((byte)(24)))));
@@ -122,6 +122,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

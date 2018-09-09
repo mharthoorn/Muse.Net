@@ -18,7 +18,6 @@ namespace Muse.LiveFeed
         public Form1()
         {
             InitializeComponent();
-            //this.DoubleBuffered = true;
         }
 
         public void Report(string text)
@@ -79,6 +78,11 @@ namespace Muse.LiveFeed
         {
             graph.Zoom += 2;
         }
-    }
 
+        private async void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            await client.Pause();
+
+        }
+    }
 }
