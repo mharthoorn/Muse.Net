@@ -66,8 +66,6 @@ The MuseClient has four events you can subscribe to: NotifyTelemetry, NotifyAcce
 Telemetry shows you battery, voltage and temperature. All the 5 EEG channels are broadcasted over the NotifyEeg event.
 
 
-## Using the command line tool
-For frequent use, add
 ## Attribution
 Thanks to Carter Appleton for pointing a way to access WinRT.
 [Win10Win32Bluetooth](https://github.com/CarterAppleton/Win10Win32Bluetooth)
