@@ -4,6 +4,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Devices.Bluetooth;
 using Windows.Devices.Bluetooth.GenericAttributeProfile;
+using Windows.Devices.Enumeration;
 using Windows.Foundation;
 
 namespace Harthoorn.MuseClient
@@ -14,9 +15,8 @@ namespace Harthoorn.MuseClient
         public ulong Address { get; private set; }
         public bool Connected { get; private set; } = false;
 
-        public MuseClient(ulong address)
+        public MuseClient()
         {
-            this.Address = address;
         }
 
         private BluetoothLEDevice device;
@@ -42,7 +42,18 @@ namespace Harthoorn.MuseClient
 
         public async Task<bool> Connect()
         {
+            ulong? bluetoothDeviceId = await FindPairedMuseDevice();
+            if (bluetoothDeviceId == null)
+                return false; // No muse found
+            
+            return await Connect(bluetoothDeviceId.Value);
+        }
+
+        public async Task<bool> Connect(ulong deviceAddress)
+        {
+            this.Address = deviceAddress;
             device = await BluetoothLEDevice.FromBluetoothAddressAsync(this.Address);
+
             if (device is null) return false;
 
             service = device.GetGattService(MuseGuid.PRIMARY_SERVICE);
@@ -61,6 +72,31 @@ namespace Harthoorn.MuseClient
 
             Connected = true;
             return true;
+        }
+
+        /// <returns>BluetoothAddress if a paired Muse bluetooth device is found</returns>
+        public static Task<ulong?> FindPairedMuseDevice()
+        {
+            string query = BluetoothLEDevice.GetDeviceSelectorFromPairingState(true);
+            var devWatch = DeviceInformation.CreateWatcher(query);
+            var tcs = new TaskCompletionSource<ulong?>();
+   
+            devWatch.Added += async (DeviceWatcher sender, DeviceInformation args) =>
+            {
+                if (args.Name.IndexOf("Muse") < 0)
+                    return;
+                devWatch.Stop(); // Stop immediately, otherwise EnumerationCompleted is triggered
+
+                var device = await BluetoothLEDevice.FromIdAsync(args.Id);
+                tcs.TrySetResult(device.BluetoothAddress);
+            };
+            devWatch.EnumerationCompleted += (DeviceWatcher sender, object args) =>
+            {
+                tcs.TrySetResult(null);
+                devWatch.Stop();
+            };
+            devWatch.Start();
+            return tcs.Task;
         }
 
         public async Task Disconnect()

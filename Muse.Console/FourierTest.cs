@@ -12,9 +12,9 @@ namespace ConsoleApp
     {
         public static async Task Collect()
         {
-            var client = new MuseClient(MyMuse.Address);
+            var client = new MuseClient();
             Console.WriteLine("Connecting...");
-            var ok = await client.Connect();
+            var ok = await client.Connect(MyMuse.Address);
             if (ok)
             {
                 await client.Subscribe(
