@@ -50,7 +50,7 @@ namespace ConsoleApp
 
         public async Task<Telemetry> TelemetryAsync()
         {
-            var client = new MuseClient(MyMuse.Address);
+            var client = new MuseClient();
 
             Console.Write("\rConnecting...");
             await client.Connect();

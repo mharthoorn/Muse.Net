@@ -13,7 +13,7 @@ namespace Muse.LiveFeed
 {
     public partial class Form1 : Form
     {
-        MuseClient client = new MuseClient(MyMuse.Address);
+        MuseClient client = new MuseClient();
 
         public Form1()
         {

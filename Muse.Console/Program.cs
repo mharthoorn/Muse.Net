@@ -28,7 +28,7 @@ namespace ConsoleApp
             }
             catch (Exception e)
             {
-                Console.WriteLine($"An error ocurred: {e}");
+                Console.WriteLine($"An error occurred: {e}");
             }
 
         }
